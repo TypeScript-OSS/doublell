@@ -11,6 +11,15 @@ describe('DoubleLinkedList', () => {
     expect(list.getTail()).toBe(node3);
   });
 
+  it('isEmpty should work', () => {
+    const list = new DoubleLinkedList<number>();
+    expect(list.isEmpty()).toBe(true);
+    list.append(1);
+    expect(list.isEmpty()).toBe(false);
+    list.clear();
+    expect(list.isEmpty()).toBe(true);
+  });
+
   it('appending should work', () => {
     const list = new DoubleLinkedList<number>();
     const node1 = list.append(1);
@@ -130,5 +139,17 @@ describe('DoubleLinkedList', () => {
     expect(list.getLength()).toEqual(0);
     expect(list.getHead()).toBeUndefined();
     expect(list.getTail()).toBeUndefined();
+  });
+
+  it('toArray should work', () => {
+    const list = new DoubleLinkedList<number>();
+    list.append(1);
+    list.append(2);
+    list.prepend(3);
+    const array = list.toArray();
+    expect(array).toHaveLength(3);
+    expect(array[0]).toBe(3);
+    expect(array[1]).toBe(1);
+    expect(array[2]).toBe(2);
   });
 });
