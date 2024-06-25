@@ -1,0 +1,37 @@
+.prettierrc.mjs
+eslint.config.mjs
+src
+typedoc.json
+
+# Account key
+*serviceAccountKey*
+
+.npmrc
+.nvmrc
+build/docs
+docs
+
+# not safe to publish patches and doesn't work
+patches/*
+
+test
+**/*.spec.*
+coverage
+.nyc_output
+jest.config.mjs
+
+tsconfig.json
+tsconfig.*.json
+tslint.json
+
+.github
+
+.circleci
+.travis.yml
+
+.prettierignore
+.vscode
+.idea
+.editorconfig
+
+*.log
