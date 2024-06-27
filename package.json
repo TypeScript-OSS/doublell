@@ -1,14 +1,18 @@
 {
   "name": "doublell",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A very minimal double linked list",
   "keywords": [
     "data-structure",
     "list"
   ],
-  "main": "lib/cjs/exports.js",
-  "module": "lib/mjs/exports.js",
-  "types": "lib/exports.d.ts",
+  "main": "./lib/cjs/exports.js",
+  "module": "./lib/mjs/exports.js",
+  "exports": {
+    "import": "./lib/mjs/exports.js",
+    "require": "./lib/cjs/exports.js"
+  },
+  "types": "./lib/exports.d.ts",
   "repository": "https://github.com/TypeScript-OSS/doublell.git",
   "homepage": "https://typescript-oss.github.io/doublell/",
   "license": "MIT",
