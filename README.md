@@ -3,7 +3,7 @@
 [![Downloads][downloads-badge]][downloads]
 [![Size][size-badge]][size]
 
-A very minimal Double Linked List implementation.
+A very minimal Double Linked List implementation for browsers and Node.
 
 ## Usage Examples
 
