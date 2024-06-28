@@ -1,6 +1,6 @@
 {
   "name": "doublell",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A very minimal double linked list",
   "keywords": [
     "browser",
@@ -9,9 +9,9 @@
     "node"
   ],
   "main": "./lib/cjs/exports.js",
-  "module": "./lib/mjs/exports.js",
+  "module": "./lib/mjs/exports.mjs",
   "exports": {
-    "import": "./lib/mjs/exports.js",
+    "import": "./lib/mjs/exports.mjs",
     "require": "./lib/cjs/exports.js"
   },
   "types": "./lib/exports.d.ts",
