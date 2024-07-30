@@ -5,6 +5,11 @@
 
 A very minimal Double Linked List implementation for browsers and Node.
 
+Provided as:
+
+- CommonJS
+- ES Module
+
 ## Usage Examples
 
 ```typescript
