@@ -1,4 +1,4 @@
-import { DoubleLinkedList } from '..';
+import { DoubleLinkedList } from '../index.js';
 
 describe('DoubleLinkedList', () => {
   it('initializing with values should work', () => {
