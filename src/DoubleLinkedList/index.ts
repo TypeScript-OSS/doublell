@@ -116,6 +116,61 @@ export class DoubleLinkedList<ItemT> {
 
     return true;
   };
+
+  public readonly insertAfterNode = (node: DoubleLinkedListNode<ItemT>, item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> | undefined => {
+    if (node.list !== this) {
+      return undefined; // Nothing to do -- wrong list
+    }
+
+    const newNode = new DoubleLinkedListNode<ItemT>(this, item);
+
+    if (node.list.lastNode === node) {
+      this.lastNode = newNode;
+    }
+
+    newNode.previousNode = node;
+
+    if (node.nextNode !== undefined) {
+      newNode.nextNode = node.nextNode;
+      node.nextNode.previousNode = newNode;
+    }
+
+    node.nextNode = newNode;
+
+    this.allValues = undefined;
+    this.length += 1;
+
+    return newNode;
+  };
+
+  public readonly insertBeforeNode = (
+    node: DoubleLinkedListNode<ItemT>,
+    item: ItemT
+  ): Readonly<DoubleLinkedListNode<ItemT>> | undefined => {
+    if (node.list !== this) {
+      return undefined; // Nothing to do -- wrong list
+    }
+
+    const newNode = new DoubleLinkedListNode<ItemT>(this, item);
+
+    if (node.list.firstNode === node) {
+      this.firstNode = newNode;
+    }
+
+    newNode.nextNode = node;
+
+    if (node.previousNode !== undefined) {
+      newNode.previousNode = node.previousNode;
+      node.previousNode.nextNode = newNode;
+    }
+
+    node.previousNode = newNode;
+
+    this.allValues = undefined;
+    this.length += 1;
+
+    return newNode;
+  };
 }
 
 export class DoubleLinkedListNode<ItemT> {

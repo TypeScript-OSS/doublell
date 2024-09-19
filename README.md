@@ -15,13 +15,15 @@ Provided as:
 ```typescript
 const list = new DoubleLinkedList<number>();
 const node1 = list.append(1);
-const node2 = list.prepend(2);
+const node0 = list.prepend(0);
+const node0_5 = list.insertBeforeNode(node1, 0.5);
+const node1_5 = list.insertAfterNode(node1, 1.5);
 console.log(list.getLength());
 console.log(list.getHead()?.value);
 console.log(list.getTail()?.value);
-console.log(node2.nextNode?.value);
+console.log(node0.nextNode?.value);
 console.log(node1.previousNode?.value);
-list.remove(node2);
+list.remove(node0);
 list.clear();
 ```
 
