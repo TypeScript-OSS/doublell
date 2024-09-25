@@ -1,6 +1,6 @@
 {
   "name": "doublell",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A very minimal double linked list",
   "keywords": [
     "browser",
@@ -37,14 +37,14 @@
   "devDependencies": {
     "@eslint/compat": "1.1.1",
     "@eslint/eslintrc": "3.1.0",
-    "@eslint/js": "9.10.0",
+    "@eslint/js": "9.11.1",
     "@types/heap": "^0.2.34",
     "@types/jest": "^29.5.13",
-    "@typescript-eslint/eslint-plugin": "^8.5.0",
-    "@typescript-eslint/parser": "^8.5.0",
-    "esbuild": "0.23.1",
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "esbuild": "0.24.0",
     "esbuild-plugin-tsc": "0.4.0",
-    "eslint": "9.10.0",
+    "eslint": "9.11.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-file-extension-in-import-ts": "2.1.1",
