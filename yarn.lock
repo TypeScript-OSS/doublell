@@ -1612,6 +1612,11 @@ arraybuffer.prototype.slice@^1.0.4:
     get-intrinsic "^1.2.6"
     is-array-buffer "^3.0.4"
 
+assert-testing@^1.0.9:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/assert-testing/-/assert-testing-1.0.12.tgz#8b84f527a05117058390791c6eeef52ee122194b"
+  integrity sha512-izuAr+HbguJlAnVQeaEU0O8Pi72e+HE3NgoSjNgAVhY68JPWPk+HpHENrgFBHswUEJ8xYhgLz9hjfJuLC3ea0Q==
+
 ast-module-types@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/ast-module-types/-/ast-module-types-6.0.1.tgz#4b4ca0251c57b815bab62604dcb22f8c903e2523"
@@ -1967,6 +1972,13 @@ data-view-byte-offset@^1.0.1:
     call-bound "^1.0.2"
     es-errors "^1.3.0"
     is-data-view "^1.0.1"
+
+dbly-linked-list@^0.3.5:
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/dbly-linked-list/-/dbly-linked-list-0.3.5.tgz#c0ef208bcfc5a223ec69464058232de87ab0104b"
+  integrity sha512-1klcvJpcJXtyTY2z/nLFZXYPxS6M4P70rWa75/QYUzOj00AiPpD3PKgvnT3oOute4Zn+umw3f9s/z46E5+i5yw==
+  dependencies:
+    lodash.isequal "4.5.0"
 
 debug@4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.4.1:
   version "4.4.1"
@@ -3932,6 +3944,11 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
+linked-list@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/linked-list/-/linked-list-3.1.0.tgz#fa1df237906c312da1ddcd43f76cce8e3121612d"
+  integrity sha512-8fTIVBkKRqJ9MPEwggRkzYsOGcicCC4qSXm6iANVJOGwXrkew85kL7zFztQHSOQBbM6zG+vqtC/cTHm4nuUCSg==
+
 linkify-it@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/linkify-it/-/linkify-it-5.0.0.tgz#9ef238bfa6dc70bd8e7f9572b52d369af569b421"
@@ -3952,6 +3969,11 @@ locate-path@^6.0.0:
   integrity sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==
   dependencies:
     p-locate "^5.0.0"
+
+lodash.isequal@4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
 
 lodash.memoize@^4.1.2:
   version "4.1.2"
@@ -4904,6 +4926,13 @@ signal-exit@^4.0.1:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-4.1.0.tgz#952188c1cbd546070e2dd20d0f41c0ae0530cb04"
   integrity sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==
+
+simple-double-linked-list@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/simple-double-linked-list/-/simple-double-linked-list-1.0.5.tgz#ff20620becac86edb90bbb41edde08f755657a5f"
+  integrity sha512-XvY8aLnwDY3guKQ9hGtlHTX+ohL2tVauOh7j7gu00kRBHvpJ7SH0oY9+ETYmySLcnF4F2K6IQqqf4sSjCFwzDQ==
+  dependencies:
+    assert-testing "^1.0.9"
 
 slash@^1.0.0:
   version "1.0.0"

@@ -73,7 +73,9 @@ export class DoubleLinkedList<ItemT> {
    * console.log(list.getLength()); // 3
    * ```
    */
-  public readonly getLength = () => this.length;
+  public getLength(): number {
+    return this.length;
+  }
 
   /**
    * Checks if the list is empty.
@@ -89,7 +91,9 @@ export class DoubleLinkedList<ItemT> {
    * console.log(list.isEmpty()); // false
    * ```
    */
-  public readonly isEmpty = () => this.firstNode === undefined;
+  public isEmpty(): boolean {
+    return this.firstNode === undefined;
+  }
 
   /**
    * Adds an item to the end of the list.
@@ -105,7 +109,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log(node.value); // 'hello'
    * ```
    */
-  public readonly append = (item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> => {
+  public append(item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> {
     const newNode = new DoubleLinkedListNode<ItemT>(this, item);
 
     if (this.firstNode === undefined) {
@@ -121,7 +125,7 @@ export class DoubleLinkedList<ItemT> {
     this.length += 1;
 
     return newNode;
-  };
+  }
 
   /**
    * Adds an item to the beginning of the list.
@@ -137,7 +141,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log([...list]); // [1, 2, 3]
    * ```
    */
-  public readonly prepend = (item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> => {
+  public prepend(item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> {
     const newNode = new DoubleLinkedListNode<ItemT>(this, item);
 
     if (this.firstNode === undefined) {
@@ -153,7 +157,7 @@ export class DoubleLinkedList<ItemT> {
     this.length += 1;
 
     return newNode;
-  };
+  }
 
   /**
    * Removes all items from the list, making it empty.
@@ -168,11 +172,11 @@ export class DoubleLinkedList<ItemT> {
    * console.log(list.isEmpty()); // true
    * ```
    */
-  public readonly clear = () => {
+  public clear(): void {
     while (this.firstNode !== undefined) {
       this.remove(this.firstNode);
     }
-  };
+  }
 
   /**
    * Gets the first node in the list.
@@ -187,7 +191,10 @@ export class DoubleLinkedList<ItemT> {
    * console.log(head?.value); // 'a'
    * ```
    */
-  public readonly getHead = (): Readonly<DoubleLinkedListNode<ItemT>> | undefined => this.firstNode;
+  public getHead(): Readonly<DoubleLinkedListNode<ItemT>> | undefined {
+    return this.firstNode;
+  }
+
   /**
    * Gets the last node in the list.
    *
@@ -201,7 +208,9 @@ export class DoubleLinkedList<ItemT> {
    * console.log(tail?.value); // 'c'
    * ```
    */
-  public readonly getTail = (): Readonly<DoubleLinkedListNode<ItemT>> | undefined => this.lastNode;
+  public getTail(): Readonly<DoubleLinkedListNode<ItemT>> | undefined {
+    return this.lastNode;
+  }
 
   /**
    * Converts the list to a readonly array.
@@ -217,7 +226,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log(array); // ['x', 'y', 'z'] (readonly)
    * ```
    */
-  public readonly toArray = (): Readonly<ItemT[]> => {
+  public toArray(): Readonly<ItemT[]> {
     if (this.allValues !== undefined) {
       return this.allValues;
     }
@@ -232,7 +241,7 @@ export class DoubleLinkedList<ItemT> {
     this.allValues = Object.freeze(output);
 
     return output;
-  };
+  }
 
   /**
    * Removes a specific node from the list.
@@ -253,7 +262,7 @@ export class DoubleLinkedList<ItemT> {
    * }
    * ```
    */
-  public readonly remove = (node: DoubleLinkedListNode<ItemT>) => {
+  public remove(node: DoubleLinkedListNode<ItemT>): boolean {
     if (node.list !== this) {
       return false; // Nothing to do -- wrong list
     }
@@ -291,7 +300,7 @@ export class DoubleLinkedList<ItemT> {
     this.length -= 1;
 
     return true;
-  };
+  }
 
   /**
    * Inserts a new item immediately after the specified node.
@@ -311,7 +320,7 @@ export class DoubleLinkedList<ItemT> {
    * }
    * ```
    */
-  public readonly insertAfterNode = (node: DoubleLinkedListNode<ItemT>, item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> | undefined => {
+  public insertAfterNode(node: DoubleLinkedListNode<ItemT>, item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> | undefined {
     if (node.list !== this) {
       return undefined; // Nothing to do -- wrong list
     }
@@ -335,7 +344,7 @@ export class DoubleLinkedList<ItemT> {
     this.length += 1;
 
     return newNode;
-  };
+  }
 
   /**
    * Inserts a new item immediately before the specified node.
@@ -355,10 +364,10 @@ export class DoubleLinkedList<ItemT> {
    * }
    * ```
    */
-  public readonly insertBeforeNode = (
+  public insertBeforeNode(
     node: DoubleLinkedListNode<ItemT>,
     item: ItemT
-  ): Readonly<DoubleLinkedListNode<ItemT>> | undefined => {
+  ): Readonly<DoubleLinkedListNode<ItemT>> | undefined {
     if (node.list !== this) {
       return undefined; // Nothing to do -- wrong list
     }
@@ -382,7 +391,7 @@ export class DoubleLinkedList<ItemT> {
     this.length += 1;
 
     return newNode;
-  };
+  }
 
   /**
    * Makes the list iterable, enabling use with for...of loops, spread operator, Array.from(), etc.
@@ -406,7 +415,7 @@ export class DoubleLinkedList<ItemT> {
    * const array2 = Array.from(list); // ['a', 'b', 'c']
    * ```
    */
-  public readonly [Symbol.iterator] = (): Iterator<ItemT> => {
+  public [Symbol.iterator](): Iterator<ItemT> {
     let current = this.firstNode;
 
     return {
@@ -420,7 +429,7 @@ export class DoubleLinkedList<ItemT> {
         return { done: false, value };
       }
     };
-  };
+  }
 
   /**
    * Executes a provided function once for each item in the list.
@@ -437,7 +446,7 @@ export class DoubleLinkedList<ItemT> {
    * });
    * ```
    */
-  public readonly forEach = (callback: (value: ItemT, index: number, list: DoubleLinkedList<ItemT>) => void): void => {
+  public forEach(callback: (value: ItemT, index: number, list: DoubleLinkedList<ItemT>) => void): void {
     let index = 0;
     let cursor = this.firstNode;
     while (cursor !== undefined) {
@@ -445,7 +454,7 @@ export class DoubleLinkedList<ItemT> {
       cursor = cursor.nextNode;
       index += 1;
     }
-  };
+  }
 
   /**
    * Creates a new DoubleLinkedList with the results of calling a provided function on every item.
@@ -466,7 +475,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log([...strings]); // ['1', '2', '3']
    * ```
    */
-  public readonly map = <U>(callback: (value: ItemT, index: number, list: DoubleLinkedList<ItemT>) => U): DoubleLinkedList<U> => {
+  public map<U>(callback: (value: ItemT, index: number, list: DoubleLinkedList<ItemT>) => U): DoubleLinkedList<U> {
     const result = new DoubleLinkedList<U>();
     let index = 0;
     let cursor = this.firstNode;
@@ -476,7 +485,7 @@ export class DoubleLinkedList<ItemT> {
       index += 1;
     }
     return result;
-  };
+  }
 
   /**
    * Returns the first item in the list that satisfies the provided testing function.
@@ -496,7 +505,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log(notFound); // undefined
    * ```
    */
-  public readonly find = (predicate: (value: ItemT, index: number, list: DoubleLinkedList<ItemT>) => boolean): ItemT | undefined => {
+  public find(predicate: (value: ItemT, index: number, list: DoubleLinkedList<ItemT>) => boolean): ItemT | undefined {
     let index = 0;
     let cursor = this.firstNode;
     while (cursor !== undefined) {
@@ -507,7 +516,7 @@ export class DoubleLinkedList<ItemT> {
       index += 1;
     }
     return undefined;
-  };
+  }
 
   /**
    * Returns the first index at which a given item can be found in the list.
@@ -526,7 +535,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log(list.indexOf('z'));    // -1 (not found)
    * ```
    */
-  public readonly indexOf = (searchElement: ItemT, fromIndex: number = 0): number => {
+  public indexOf(searchElement: ItemT, fromIndex: number = 0): number {
     let index = 0;
     let cursor = this.firstNode;
 
@@ -544,7 +553,7 @@ export class DoubleLinkedList<ItemT> {
       index += 1;
     }
     return -1;
-  };
+  }
 
   /**
    * Determines whether the list includes a certain item.
@@ -563,9 +572,9 @@ export class DoubleLinkedList<ItemT> {
    * console.log(list.includes(1, 1)); // false (starting from index 1)
    * ```
    */
-  public readonly includes = (searchElement: ItemT, fromIndex: number = 0): boolean => {
+  public includes(searchElement: ItemT, fromIndex: number = 0): boolean {
     return this.indexOf(searchElement, fromIndex) !== -1;
-  };
+  }
 
   /**
    * Adds an item to the end of the list (stack/array-like operation).
@@ -583,9 +592,9 @@ export class DoubleLinkedList<ItemT> {
    * console.log(stack.pop()); // 2 (LIFO)
    * ```
    */
-  public readonly push = (item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> => {
+  public push(item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> {
     return this.append(item);
-  };
+  }
 
   /**
    * Removes and returns the last item from the list (stack-like operation).
@@ -601,7 +610,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log([...stack]);  // [1]
    * ```
    */
-  public readonly pop = (): ItemT | undefined => {
+  public pop(): ItemT | undefined {
     if (this.lastNode === undefined) {
       return undefined;
     }
@@ -609,7 +618,7 @@ export class DoubleLinkedList<ItemT> {
     const value = this.lastNode.value;
     this.remove(this.lastNode);
     return value;
-  };
+  }
 
   /**
    * Removes and returns the first item from the list (queue-like operation).
@@ -625,7 +634,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log([...queue]);    // [2, 3, 4]
    * ```
    */
-  public readonly shift = (): ItemT | undefined => {
+  public shift(): ItemT | undefined {
     if (this.firstNode === undefined) {
       return undefined;
     }
@@ -633,7 +642,7 @@ export class DoubleLinkedList<ItemT> {
     const value = this.firstNode.value;
     this.remove(this.firstNode);
     return value;
-  };
+  }
 
   /**
    * Adds an item to the beginning of the list (array-like operation).
@@ -650,9 +659,9 @@ export class DoubleLinkedList<ItemT> {
    * console.log([...list]); // [1, 2, 3]
    * ```
    */
-  public readonly unshift = (item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> => {
+  public unshift(item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> {
     return this.prepend(item);
-  };
+  }
 
   /**
    * Gets the item at the specified index (array-like access).
@@ -678,10 +687,10 @@ export class DoubleLinkedList<ItemT> {
    * console.log(list.get(-10)); // undefined (out of bounds)
    * ```
    */
-  public readonly get = (index: number): ItemT | undefined => {
+  public get(index: number): ItemT | undefined {
     const node = this.getNodeAt(index);
     return node?.value;
-  };
+  }
 
   /**
    * Gets the node at the specified index.
@@ -698,7 +707,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log(node?.value); // 'b'
    * ```
    */
-  public readonly getNodeAt = (index: number): Readonly<DoubleLinkedListNode<ItemT>> | undefined => {
+  public getNodeAt(index: number): Readonly<DoubleLinkedListNode<ItemT>> | undefined {
     const length = this.length;
 
     // Handle negative indices
@@ -728,7 +737,7 @@ export class DoubleLinkedList<ItemT> {
       }
       return current;
     }
-  };
+  }
 
   /**
    * Changes the contents of the list by removing existing items and/or adding new items.
@@ -786,11 +795,11 @@ export class DoubleLinkedList<ItemT> {
    * console.log([...list]); // ['a', 'b', 'x', 'd']
    * ```
    */
-  public readonly splice = (
+  public splice(
     start: number | DoubleLinkedListNode<ItemT> | undefined,
     deleteCount: number = 0,
     ...items: ItemT[]
-  ): DoubleLinkedList<ItemT> => {
+  ): DoubleLinkedList<ItemT> {
     // Prep phase: normalize all start types to startNode
     let startNode: DoubleLinkedListNode<ItemT> | undefined;
 
@@ -844,7 +853,7 @@ export class DoubleLinkedList<ItemT> {
     }
 
     return removed;
-  };
+  }
 }
 
 /**
