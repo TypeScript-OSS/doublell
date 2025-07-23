@@ -21,7 +21,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "benchmark": "node ./benchmark.mjs",
+    "benchmark": "yarn build && cd benchmarks && yarn benchmark",
     "build": "tsc -p tsconfig.cjs.json && node ./build.mjs",
     "build:dev": "trash dev-build && yarn build && mkdir dev-build && cp -r lib dev-build && cp package.json dev-build && (cd dev-build && echo 'package' `pwd`)",
     "clean": "trash coverage dev-build docs lib",
@@ -65,6 +65,7 @@
     "simple-double-linked-list": "^1.0.5",
     "trash-cli": "6.0.0",
     "ts-jest": "^29.4.0",
+    "tsx": "^4.20.3",
     "typedoc": "^0.28.7",
     "typescript": "5.8.3"
   }

@@ -36,9 +36,6 @@
  * ```
  */
 export class DoubleLinkedList<ItemT> {
-  /** This is set to `undefined` on any list mutations and rebuilt when `toArray` is called if needed */
-  private allValues: Readonly<ItemT[]> | undefined;
-
   private firstNode: DoubleLinkedListNode<ItemT> | undefined;
   private lastNode: DoubleLinkedListNode<ItemT> | undefined;
   private length = 0;
@@ -56,8 +53,10 @@ export class DoubleLinkedList<ItemT> {
    * ```
    */
   public constructor(...items: ItemT[]) {
-    for (const item of items) {
-      this.append(item);
+    if (items.length > 0) {
+      for (const item of items) {
+        this.append(item);
+      }
     }
   }
 
@@ -109,19 +108,17 @@ export class DoubleLinkedList<ItemT> {
    * console.log(node.value); // 'hello'
    * ```
    */
-  public append(item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> {
-    const newNode = new DoubleLinkedListNode<ItemT>(this, item);
+  public append(item: ItemT): DoubleLinkedListNode<ItemT> {
+    const newNode: DoubleLinkedListNode<ItemT> = [this, item, this.lastNode, undefined];
 
-    if (this.firstNode === undefined) {
+    if (this.length === 0) {
       this.firstNode = newNode;
-      this.lastNode = newNode;
     } else {
-      newNode.previousNode = this.lastNode;
-      this.lastNode!.nextNode = newNode;
-      this.lastNode = newNode;
+      this.lastNode![NEXT] = newNode;
     }
 
-    this.allValues = undefined;
+    this.lastNode = newNode;
+
     this.length += 1;
 
     return newNode;
@@ -141,19 +138,17 @@ export class DoubleLinkedList<ItemT> {
    * console.log([...list]); // [1, 2, 3]
    * ```
    */
-  public prepend(item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> {
-    const newNode = new DoubleLinkedListNode<ItemT>(this, item);
+  public prepend(item: ItemT): DoubleLinkedListNode<ItemT> {
+    const newNode: DoubleLinkedListNode<ItemT> = [this, item, undefined, this.firstNode];
 
-    if (this.firstNode === undefined) {
-      this.firstNode = newNode;
+    if (this.length === 0) {
       this.lastNode = newNode;
     } else {
-      newNode.nextNode = this.firstNode;
-      this.firstNode!.previousNode = newNode;
-      this.firstNode = newNode;
+      this.firstNode![PREV] = newNode;
     }
 
-    this.allValues = undefined;
+    this.firstNode = newNode;
+
     this.length += 1;
 
     return newNode;
@@ -191,7 +186,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log(head?.value); // 'a'
    * ```
    */
-  public getHead(): Readonly<DoubleLinkedListNode<ItemT>> | undefined {
+  public getHead(): DoubleLinkedListNode<ItemT> | undefined {
     return this.firstNode;
   }
 
@@ -208,7 +203,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log(tail?.value); // 'c'
    * ```
    */
-  public getTail(): Readonly<DoubleLinkedListNode<ItemT>> | undefined {
+  public getTail(): DoubleLinkedListNode<ItemT> | undefined {
     return this.lastNode;
   }
 
@@ -217,7 +212,7 @@ export class DoubleLinkedList<ItemT> {
    * Uses internal caching for performance - the array is only rebuilt when the list is modified.
    *
    * @returns A readonly array containing all items in the list
-   * @remarks Time complexity: O(n) on first call after modification, O(1) for cached results
+   * @remarks Time complexity: O(n)
    *
    * @example
    * ```typescript
@@ -227,18 +222,14 @@ export class DoubleLinkedList<ItemT> {
    * ```
    */
   public toArray(): Readonly<ItemT[]> {
-    if (this.allValues !== undefined) {
-      return this.allValues;
-    }
-
-    const output: ItemT[] = [];
+    const output = new Array<ItemT>(this.length);
     let cursor = this.firstNode;
+    let index = 0;
     while (cursor !== undefined) {
-      output.push(cursor.value);
-      cursor = cursor.nextNode;
+      output[index] = cursor[VALUE];
+      cursor = cursor[NEXT];
+      index += 1;
     }
-
-    this.allValues = Object.freeze(output);
 
     return output;
   }
@@ -263,40 +254,44 @@ export class DoubleLinkedList<ItemT> {
    * ```
    */
   public remove(node: DoubleLinkedListNode<ItemT>): boolean {
-    if (node.list !== this) {
-      return false; // Nothing to do -- wrong list
-    }
-
-    if (node === this.firstNode) {
-      // Removing head
-
-      this.firstNode = node.nextNode;
-      if (this.firstNode !== undefined) {
-        this.firstNode.previousNode = undefined;
-      } else {
-        this.lastNode = undefined;
-      }
-    } else if (node === this.lastNode) {
+    if (node === this.lastNode) {
       // Removing tail
 
-      this.lastNode = node.previousNode;
-      if (this.lastNode !== undefined) {
-        this.lastNode.nextNode = undefined;
+      const newLast = node[PREV];
+      this.lastNode = newLast;
+      if (newLast !== undefined) {
+        newLast[NEXT] = undefined;
       } else {
         this.firstNode = undefined;
+      }
+    } else if (node === this.firstNode) {
+      // Removing head
+
+      const newFirst = node[NEXT];
+      this.firstNode = newFirst;
+      if (newFirst !== undefined) {
+        newFirst[PREV] = undefined;
+      } else {
+        this.lastNode = undefined;
       }
     } else {
       // Removing middle
 
-      node.previousNode!.nextNode = node.nextNode;
-      node.nextNode!.previousNode = node.previousNode;
+      if (node[LIST] !== this) {
+        return false; // Nothing to do -- wrong list
+      }
+
+      const prev = node[PREV];
+      const next = node[NEXT];
+      prev![NEXT] = next;
+      next![PREV] = prev;
     }
 
-    node.previousNode = undefined;
-    node.nextNode = undefined;
-    node.list = undefined;
+    // Clear node references
+    node[PREV] = undefined;
+    node[NEXT] = undefined;
+    node[LIST] = undefined;
 
-    this.allValues = undefined;
     this.length -= 1;
 
     return true;
@@ -320,27 +315,20 @@ export class DoubleLinkedList<ItemT> {
    * }
    * ```
    */
-  public insertAfterNode(node: DoubleLinkedListNode<ItemT>, item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> | undefined {
-    if (node.list !== this) {
+  public insertAfterNode(node: DoubleLinkedListNode<ItemT>, item: ItemT): DoubleLinkedListNode<ItemT> | undefined {
+    if (node[LIST] !== this) {
       return undefined; // Nothing to do -- wrong list
     }
 
-    const newNode = new DoubleLinkedListNode<ItemT>(this, item);
-
-    if (node.list.lastNode === node) {
-      this.lastNode = newNode;
+    if (this.lastNode === node) {
+      return this.append(item);
     }
 
-    newNode.previousNode = node;
+    const newNode: DoubleLinkedListNode<ItemT> = [this, item, node, node[NEXT]];
 
-    if (node.nextNode !== undefined) {
-      newNode.nextNode = node.nextNode;
-      node.nextNode.previousNode = newNode;
-    }
+    node[NEXT]![PREV] = newNode;
+    node[NEXT] = newNode;
 
-    node.nextNode = newNode;
-
-    this.allValues = undefined;
     this.length += 1;
 
     return newNode;
@@ -364,30 +352,20 @@ export class DoubleLinkedList<ItemT> {
    * }
    * ```
    */
-  public insertBeforeNode(
-    node: DoubleLinkedListNode<ItemT>,
-    item: ItemT
-  ): Readonly<DoubleLinkedListNode<ItemT>> | undefined {
-    if (node.list !== this) {
+  public insertBeforeNode(node: DoubleLinkedListNode<ItemT>, item: ItemT): DoubleLinkedListNode<ItemT> | undefined {
+    if (node[LIST] !== this) {
       return undefined; // Nothing to do -- wrong list
     }
 
-    const newNode = new DoubleLinkedListNode<ItemT>(this, item);
-
-    if (node.list.firstNode === node) {
-      this.firstNode = newNode;
+    if (this.firstNode === node) {
+      return this.prepend(item);
     }
 
-    newNode.nextNode = node;
+    const newNode: DoubleLinkedListNode<ItemT> = [this, item, node[PREV], node];
 
-    if (node.previousNode !== undefined) {
-      newNode.previousNode = node.previousNode;
-      node.previousNode.nextNode = newNode;
-    }
+    node[PREV]![NEXT] = newNode;
+    node[PREV] = newNode;
 
-    node.previousNode = newNode;
-
-    this.allValues = undefined;
     this.length += 1;
 
     return newNode;
@@ -424,8 +402,8 @@ export class DoubleLinkedList<ItemT> {
           return { done: true, value: undefined };
         }
 
-        const value = current.value;
-        current = current.nextNode;
+        const value = current[VALUE];
+        current = current[NEXT];
         return { done: false, value };
       }
     };
@@ -450,8 +428,8 @@ export class DoubleLinkedList<ItemT> {
     let index = 0;
     let cursor = this.firstNode;
     while (cursor !== undefined) {
-      callback(cursor.value, index, this);
-      cursor = cursor.nextNode;
+      callback(cursor[VALUE], index, this);
+      cursor = cursor[NEXT];
       index += 1;
     }
   }
@@ -480,8 +458,8 @@ export class DoubleLinkedList<ItemT> {
     let index = 0;
     let cursor = this.firstNode;
     while (cursor !== undefined) {
-      result.append(callback(cursor.value, index, this));
-      cursor = cursor.nextNode;
+      result.append(callback(cursor[VALUE], index, this));
+      cursor = cursor[NEXT];
       index += 1;
     }
     return result;
@@ -509,10 +487,10 @@ export class DoubleLinkedList<ItemT> {
     let index = 0;
     let cursor = this.firstNode;
     while (cursor !== undefined) {
-      if (predicate(cursor.value, index, this)) {
-        return cursor.value;
+      if (predicate(cursor[VALUE], index, this)) {
+        return cursor[VALUE];
       }
-      cursor = cursor.nextNode;
+      cursor = cursor[NEXT];
       index += 1;
     }
     return undefined;
@@ -541,15 +519,15 @@ export class DoubleLinkedList<ItemT> {
 
     // Skip to fromIndex
     while (cursor !== undefined && index < fromIndex) {
-      cursor = cursor.nextNode;
+      cursor = cursor[NEXT];
       index += 1;
     }
 
     while (cursor !== undefined) {
-      if (cursor.value === searchElement) {
+      if (cursor[VALUE] === searchElement) {
         return index;
       }
-      cursor = cursor.nextNode;
+      cursor = cursor[NEXT];
       index += 1;
     }
     return -1;
@@ -592,7 +570,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log(stack.pop()); // 2 (LIFO)
    * ```
    */
-  public push(item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> {
+  public push(item: ItemT): DoubleLinkedListNode<ItemT> {
     return this.append(item);
   }
 
@@ -615,7 +593,7 @@ export class DoubleLinkedList<ItemT> {
       return undefined;
     }
 
-    const value = this.lastNode.value;
+    const value = this.lastNode[VALUE];
     this.remove(this.lastNode);
     return value;
   }
@@ -639,7 +617,7 @@ export class DoubleLinkedList<ItemT> {
       return undefined;
     }
 
-    const value = this.firstNode.value;
+    const value = this.firstNode[VALUE];
     this.remove(this.firstNode);
     return value;
   }
@@ -659,7 +637,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log([...list]); // [1, 2, 3]
    * ```
    */
-  public unshift(item: ItemT): Readonly<DoubleLinkedListNode<ItemT>> {
+  public unshift(item: ItemT): DoubleLinkedListNode<ItemT> {
     return this.prepend(item);
   }
 
@@ -689,7 +667,7 @@ export class DoubleLinkedList<ItemT> {
    */
   public get(index: number): ItemT | undefined {
     const node = this.getNodeAt(index);
-    return node?.value;
+    return node?.[VALUE];
   }
 
   /**
@@ -707,7 +685,7 @@ export class DoubleLinkedList<ItemT> {
    * console.log(node?.value); // 'b'
    * ```
    */
-  public getNodeAt(index: number): Readonly<DoubleLinkedListNode<ItemT>> | undefined {
+  public getNodeAt(index: number): DoubleLinkedListNode<ItemT> | undefined {
     const length = this.length;
 
     // Handle negative indices
@@ -725,15 +703,15 @@ export class DoubleLinkedList<ItemT> {
     if (fromHead <= fromTail) {
       // Traverse from head
       let current = this.firstNode;
-      for (let i = 0; i < actualIndex && current; i += 1) {
-        current = current.nextNode;
+      for (let i = 0; i < fromHead && current; i += 1) {
+        current = current[NEXT];
       }
       return current;
     } else {
       // Traverse from tail
       let current = this.lastNode;
       for (let i = 0; i < fromTail && current; i += 1) {
-        current = current.previousNode;
+        current = current[PREV];
       }
       return current;
     }
@@ -813,7 +791,7 @@ export class DoubleLinkedList<ItemT> {
       startNode = actualStart >= length ? undefined : this.getNodeAt(actualStart);
     } else {
       // start is already a DoubleLinkedListNode
-      if (start.list !== this) {
+      if (start[LIST] !== this) {
         // Node doesn't belong to this list, treat as no-op
         return new DoubleLinkedList<ItemT>();
       }
@@ -823,11 +801,10 @@ export class DoubleLinkedList<ItemT> {
     // Remove items - deleteCount is naturally bounded by available nodes
     const removed = new DoubleLinkedList<ItemT>();
     let nodeToRemove = startNode;
-    const actualDeleteCount = Math.max(0, deleteCount);
 
-    for (let i = 0; i < actualDeleteCount && nodeToRemove; i += 1) {
-      const nextNode = nodeToRemove.nextNode;
-      removed.append(nodeToRemove.value);
+    for (let i = 0; i < deleteCount && nodeToRemove; i += 1) {
+      const nextNode = nodeToRemove[NEXT];
+      removed.append(nodeToRemove[VALUE]);
       this.remove(nodeToRemove);
       nodeToRemove = nextNode;
     }
@@ -858,36 +835,85 @@ export class DoubleLinkedList<ItemT> {
 
 /**
  * A node in a DoubleLinkedList containing a value and references to adjacent nodes.
+ * Implemented as a tuple for optimal memory layout and performance.
  *
  * @typeParam ItemT - The type of the value stored in this node
  *
- * @example Traversing nodes
+ * Tuple structure: [list, value, previousNode, nextNode]
+ * - Index 0: Reference to the list that owns this node (undefined after removal)
+ * - Index 1: The immutable value stored in this node
+ * - Index 2: Reference to the previous node, or undefined if this is the first node
+ * - Index 3: Reference to the next node, or undefined if this is the last node
+ *
+ * @example Traversing nodes with index access for best performance
  * ```typescript
  * const list = new DoubleLinkedList('a', 'b', 'c');
  * let node = list.getHead();
  * while (node) {
- *   console.log(node.value); // 'a', 'b', 'c'
- *   node = node.nextNode;
+ *   console.log(getNodeValue(node)); // 'a', 'b', 'c' - access value at index 1
+ *   node = getNextNode(node);       // next node at index 3
+ * }
+ * ```
+ *
+ * @example Using helper functions for readable code
+ * ```typescript
+ * import { nodeValue, nodeNext } from 'doublell';
+ *
+ * const list = new DoubleLinkedList('a', 'b', 'c');
+ * let node = list.getHead();
+ * while (node) {
+ *   console.log(nodeValue(node)); // 'a', 'b', 'c'
+ *   node = nodeNext(node);
  * }
  * ```
  */
-export class DoubleLinkedListNode<ItemT> {
-  /**
-   * Creates a new DoubleLinkedListNode.
-   *
-   * @param list - Reference to the list that owns this node
-   * @param value - The value stored in this node
-   * @param previousNode - Reference to the previous node in the list
-   * @param nextNode - Reference to the next node in the list
-   */
-  constructor(
-    /** Reference to the list that owns this node (undefined after removal) */
-    public list: DoubleLinkedList<ItemT> | undefined,
-    /** The immutable value stored in this node */
-    public readonly value: ItemT,
-    /** Reference to the previous node, or undefined if this is the first node */
-    public previousNode?: DoubleLinkedListNode<ItemT>,
-    /** Reference to the next node, or undefined if this is the last node */
-    public nextNode?: DoubleLinkedListNode<ItemT>
-  ) {}
+export type DoubleLinkedListNode<ItemT> = [
+  list: DoubleLinkedList<ItemT> | undefined,
+  value: ItemT,
+  prev: DoubleLinkedListNode<ItemT> | undefined,
+  next: DoubleLinkedListNode<ItemT> | undefined
+];
+
+const LIST = 0;
+const VALUE = 1;
+const PREV = 2;
+const NEXT = 3;
+
+/**
+ * Helper function to get the list reference from a node.
+ * @param node - The node to get the list from
+ * @returns The list that owns this node
+ */
+export function getNodeList<ItemT>(node: DoubleLinkedListNode<ItemT> | undefined): DoubleLinkedList<ItemT> | undefined {
+  return node?.[LIST];
+}
+
+/**
+ * Helper function to get the value from a node.
+ * @param node - The node to get the value from
+ * @returns The value stored in this node
+ */
+export function getNodeValue<ItemT>(node: DoubleLinkedListNode<ItemT>): ItemT;
+export function getNodeValue<_ItemT>(node: undefined): undefined;
+export function getNodeValue<ItemT>(node: DoubleLinkedListNode<ItemT> | undefined): ItemT | undefined;
+export function getNodeValue<ItemT>(node: DoubleLinkedListNode<ItemT> | undefined): ItemT | undefined {
+  return node?.[VALUE];
+}
+
+/**
+ * Helper function to get the previous node from a node.
+ * @param node - The node to get the previous node from
+ * @returns The previous node, or undefined if this is the first node
+ */
+export function getPreviousNode<ItemT>(node: DoubleLinkedListNode<ItemT> | undefined): DoubleLinkedListNode<ItemT> | undefined {
+  return node?.[PREV];
+}
+
+/**
+ * Helper function to get the next node from a node.
+ * @param node - The node to get the next node from
+ * @returns The next node, or undefined if this is the last node
+ */
+export function getNextNode<ItemT>(node: DoubleLinkedListNode<ItemT> | undefined): DoubleLinkedListNode<ItemT> | undefined {
+  return node?.[NEXT];
 }

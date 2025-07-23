@@ -1,0 +1,20 @@
+{
+  "name": "doublell-benchmarks",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Performance benchmarks for doublell",
+  "type": "module",
+  "scripts": {
+    "benchmark": "tsx ./benchmark.ts"
+  },
+  "dependencies": {
+    "doublell": "file:.."
+  },
+  "devDependencies": {
+    "dbly-linked-list": "^0.3.5",
+    "linked-list": "^3.1.0",
+    "simple-double-linked-list": "^1.0.5",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

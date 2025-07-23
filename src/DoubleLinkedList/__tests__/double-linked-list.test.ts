@@ -1,4 +1,4 @@
-import { DoubleLinkedList, type DoubleLinkedListNode } from '../index.js';
+import { DoubleLinkedList, type DoubleLinkedListNode, getNextNode, getNodeList, getNodeValue, getPreviousNode } from '../index.js';
 
 describe('DoubleLinkedList', () => {
   it('initializing with values should work', () => {
@@ -7,7 +7,7 @@ describe('DoubleLinkedList', () => {
     list.append(5);
     const node3 = list.append(6);
     expect(list.getLength()).toEqual(6);
-    expect(list.getHead()?.value).toEqual(1);
+    expect(getNodeValue(list.getHead())).toEqual(1);
     expect(list.getTail()).toBe(node3);
   });
 
@@ -28,12 +28,12 @@ describe('DoubleLinkedList', () => {
     expect(list.getLength()).toEqual(3);
     expect(list.getHead()).toBe(node1);
     expect(list.getTail()).toBe(node3);
-    expect(node1.previousNode).toBeUndefined();
-    expect(node2.previousNode).toBe(node1);
-    expect(node3.previousNode).toBe(node2);
-    expect(node1.nextNode).toBe(node2);
-    expect(node2.nextNode).toBe(node3);
-    expect(node3.nextNode).toBeUndefined();
+    expect(getPreviousNode(node1)).toBeUndefined();
+    expect(getPreviousNode(node2)).toBe(node1);
+    expect(getPreviousNode(node3)).toBe(node2);
+    expect(getNextNode(node1)).toBe(node2);
+    expect(getNextNode(node2)).toBe(node3);
+    expect(getNextNode(node3)).toBeUndefined();
   });
 
   it('prepending should work', () => {
@@ -44,12 +44,12 @@ describe('DoubleLinkedList', () => {
     expect(list.getLength()).toEqual(3);
     expect(list.getHead()).toBe(node1);
     expect(list.getTail()).toBe(node3);
-    expect(node1.previousNode).toBeUndefined();
-    expect(node2.previousNode).toBe(node1);
-    expect(node3.previousNode).toBe(node2);
-    expect(node1.nextNode).toBe(node2);
-    expect(node2.nextNode).toBe(node3);
-    expect(node3.nextNode).toBeUndefined();
+    expect(getPreviousNode(node1)).toBeUndefined();
+    expect(getPreviousNode(node2)).toBe(node1);
+    expect(getPreviousNode(node3)).toBe(node2);
+    expect(getNextNode(node1)).toBe(node2);
+    expect(getNextNode(node2)).toBe(node3);
+    expect(getNextNode(node3)).toBeUndefined();
   });
 
   it('insertAfterNode should work', () => {
@@ -61,36 +61,36 @@ describe('DoubleLinkedList', () => {
     expect(list.getLength()).toEqual(4);
     expect(list.getHead()).toBe(node1);
     expect(list.getTail()).toBe(node3);
-    expect(node1.previousNode).toBeUndefined();
-    expect(node2.previousNode).toBe(node1);
-    expect(node2_5?.previousNode).toBe(node2);
-    expect(node3.previousNode).toBe(node2_5);
-    expect(node1.nextNode).toBe(node2);
-    expect(node2.nextNode).toBe(node2_5);
-    expect(node2_5?.nextNode).toBe(node3);
-    expect(node3.nextNode).toBeUndefined();
+    expect(getPreviousNode(node1)).toBeUndefined();
+    expect(getPreviousNode(node2)).toBe(node1);
+    expect(getPreviousNode(node2_5)).toBe(node2);
+    expect(getPreviousNode(node3)).toBe(node2_5);
+    expect(getNextNode(node1)).toBe(node2);
+    expect(getNextNode(node2)).toBe(node2_5);
+    expect(getNextNode(node2_5)).toBe(node3);
+    expect(getNextNode(node3)).toBeUndefined();
 
     const node1_5 = list.insertAfterNode(node1, 1.5);
     expect(list.getLength()).toEqual(5);
     expect(list.getHead()).toBe(node1);
     expect(list.getTail()).toBe(node3);
-    expect(node1.previousNode).toBeUndefined();
-    expect(node1_5?.previousNode).toBe(node1);
-    expect(node2.previousNode).toBe(node1_5);
-    expect(node1.nextNode).toBe(node1_5);
-    expect(node1_5?.nextNode).toBe(node2);
-    expect(node2.nextNode).toBe(node2_5);
+    expect(getPreviousNode(node1)).toBeUndefined();
+    expect(getPreviousNode(node1_5)).toBe(node1);
+    expect(getPreviousNode(node2)).toBe(node1_5);
+    expect(getNextNode(node1)).toBe(node1_5);
+    expect(getNextNode(node1_5)).toBe(node2);
+    expect(getNextNode(node2)).toBe(node2_5);
 
     const node3_5 = list.insertAfterNode(node3, 3.5);
     expect(list.getLength()).toEqual(6);
     expect(list.getHead()).toBe(node1);
     expect(list.getTail()).toBe(node3_5);
-    expect(node2_5?.previousNode).toBe(node2);
-    expect(node3.previousNode).toBe(node2_5);
-    expect(node3_5?.previousNode).toBe(node3);
-    expect(node2_5?.nextNode).toBe(node3);
-    expect(node3.nextNode).toBe(node3_5);
-    expect(node3_5?.nextNode).toBeUndefined();
+    expect(getPreviousNode(node2_5)).toBe(node2);
+    expect(getPreviousNode(node3)).toBe(node2_5);
+    expect(getPreviousNode(node3_5)).toBe(node3);
+    expect(getNextNode(node2_5)).toBe(node3);
+    expect(getNextNode(node3)).toBe(node3_5);
+    expect(getNextNode(node3_5)).toBeUndefined();
   });
 
   it('insertBeforeNode should work', () => {
@@ -102,38 +102,38 @@ describe('DoubleLinkedList', () => {
     expect(list.getLength()).toEqual(4);
     expect(list.getHead()).toBe(node1);
     expect(list.getTail()).toBe(node3);
-    expect(node1.previousNode).toBeUndefined();
-    expect(node1_5?.previousNode).toBe(node1);
-    expect(node2.previousNode).toBe(node1_5);
-    expect(node3.previousNode).toBe(node2);
-    expect(node1.nextNode).toBe(node1_5);
-    expect(node1_5?.nextNode).toBe(node2);
-    expect(node2.nextNode).toBe(node3);
-    expect(node3.nextNode).toBeUndefined();
+    expect(getPreviousNode(node1)).toBeUndefined();
+    expect(getPreviousNode(node1_5)).toBe(node1);
+    expect(getPreviousNode(node2)).toBe(node1_5);
+    expect(getPreviousNode(node3)).toBe(node2);
+    expect(getNextNode(node1)).toBe(node1_5);
+    expect(getNextNode(node1_5)).toBe(node2);
+    expect(getNextNode(node2)).toBe(node3);
+    expect(getNextNode(node3)).toBeUndefined();
 
     const node0_5 = list.insertBeforeNode(node1, 0.5);
     expect(list.getLength()).toEqual(5);
     expect(list.getHead()).toBe(node0_5);
     expect(list.getTail()).toBe(node3);
-    expect(node0_5?.previousNode).toBeUndefined();
-    expect(node1.previousNode).toBe(node0_5);
-    expect(node1_5?.previousNode).toBe(node1);
-    expect(node2.previousNode).toBe(node1_5);
-    expect(node0_5?.nextNode).toBe(node1);
-    expect(node1.nextNode).toBe(node1_5);
-    expect(node1_5?.nextNode).toBe(node2);
-    expect(node2.nextNode).toBe(node3);
+    expect(getPreviousNode(node0_5)).toBeUndefined();
+    expect(getPreviousNode(node1)).toBe(node0_5);
+    expect(getPreviousNode(node1_5)).toBe(node1);
+    expect(getPreviousNode(node2)).toBe(node1_5);
+    expect(getNextNode(node0_5)).toBe(node1);
+    expect(getNextNode(node1)).toBe(node1_5);
+    expect(getNextNode(node1_5)).toBe(node2);
+    expect(getNextNode(node2)).toBe(node3);
 
     const node2_5 = list.insertBeforeNode(node3, 2.5);
     expect(list.getLength()).toEqual(6);
     expect(list.getHead()).toBe(node0_5);
     expect(list.getTail()).toBe(node3);
-    expect(node2.previousNode).toBe(node1_5);
-    expect(node2_5?.previousNode).toBe(node2);
-    expect(node3.previousNode).toBe(node2_5);
-    expect(node2.nextNode).toBe(node2_5);
-    expect(node2_5?.nextNode).toBe(node3);
-    expect(node3.nextNode).toBeUndefined();
+    expect(getPreviousNode(node2)).toBe(node1_5);
+    expect(getPreviousNode(node2_5)).toBe(node2);
+    expect(getPreviousNode(node3)).toBe(node2_5);
+    expect(getNextNode(node2)).toBe(node2_5);
+    expect(getNextNode(node2_5)).toBe(node3);
+    expect(getNextNode(node3)).toBeUndefined();
   });
 
   it('remove head should work', () => {
@@ -145,12 +145,12 @@ describe('DoubleLinkedList', () => {
     expect(list.getLength()).toEqual(2);
     expect(list.getHead()).toBe(node2);
     expect(list.getTail()).toBe(node3);
-    expect(node1.previousNode).toBeUndefined();
-    expect(node2.previousNode).toBeUndefined();
-    expect(node3.previousNode).toBe(node2);
-    expect(node1.nextNode).toBeUndefined();
-    expect(node2.nextNode).toBe(node3);
-    expect(node3.nextNode).toBeUndefined();
+    expect(getPreviousNode(node1)).toBeUndefined();
+    expect(getPreviousNode(node2)).toBeUndefined();
+    expect(getPreviousNode(node3)).toBe(node2);
+    expect(getNextNode(node1)).toBeUndefined();
+    expect(getNextNode(node2)).toBe(node3);
+    expect(getNextNode(node3)).toBeUndefined();
   });
 
   it('remove tail should work', () => {
@@ -162,12 +162,12 @@ describe('DoubleLinkedList', () => {
     expect(list.getLength()).toEqual(2);
     expect(list.getHead()).toBe(node1);
     expect(list.getTail()).toBe(node2);
-    expect(node1.previousNode).toBeUndefined();
-    expect(node2.previousNode).toBe(node1);
-    expect(node3.previousNode).toBeUndefined();
-    expect(node1.nextNode).toBe(node2);
-    expect(node2.nextNode).toBeUndefined();
-    expect(node3.nextNode).toBeUndefined();
+    expect(getPreviousNode(node1)).toBeUndefined();
+    expect(getPreviousNode(node2)).toBe(node1);
+    expect(getPreviousNode(node3)).toBeUndefined();
+    expect(getNextNode(node1)).toBe(node2);
+    expect(getNextNode(node2)).toBeUndefined();
+    expect(getNextNode(node3)).toBeUndefined();
   });
 
   it('remove middle should work', () => {
@@ -179,12 +179,12 @@ describe('DoubleLinkedList', () => {
     expect(list.getLength()).toEqual(2);
     expect(list.getHead()).toBe(node1);
     expect(list.getTail()).toBe(node3);
-    expect(node1.previousNode).toBeUndefined();
-    expect(node2.previousNode).toBeUndefined();
-    expect(node3.previousNode).toBe(node1);
-    expect(node1.nextNode).toBe(node3);
-    expect(node2.nextNode).toBeUndefined();
-    expect(node3.nextNode).toBeUndefined();
+    expect(getPreviousNode(node1)).toBeUndefined();
+    expect(getPreviousNode(node2)).toBeUndefined();
+    expect(getPreviousNode(node3)).toBe(node1);
+    expect(getNextNode(node1)).toBe(node3);
+    expect(getNextNode(node2)).toBeUndefined();
+    expect(getNextNode(node3)).toBeUndefined();
   });
 
   it('remove all should work', () => {
@@ -429,9 +429,9 @@ describe('DoubleLinkedList', () => {
         const node1 = list.getNodeAt(1);
         const node2 = list.getNodeAt(2);
 
-        expect(node0?.value).toBe('a');
-        expect(node1?.value).toBe('b');
-        expect(node2?.value).toBe('c');
+        expect(getNodeValue(node0)).toBe('a');
+        expect(getNodeValue(node1)).toBe('b');
+        expect(getNodeValue(node2)).toBe('c');
         expect(node0).toBe(list.getHead());
         expect(node2).toBe(list.getTail());
       });
@@ -442,9 +442,9 @@ describe('DoubleLinkedList', () => {
         const nodeMinus2 = list.getNodeAt(-2);
         const nodeMinus3 = list.getNodeAt(-3);
 
-        expect(nodeMinus1?.value).toBe('c');
-        expect(nodeMinus2?.value).toBe('b');
-        expect(nodeMinus3?.value).toBe('a');
+        expect(getNodeValue(nodeMinus1)).toBe('c');
+        expect(getNodeValue(nodeMinus2)).toBe('b');
+        expect(getNodeValue(nodeMinus3)).toBe('a');
         expect(nodeMinus1).toBe(list.getTail());
         expect(nodeMinus3).toBe(list.getHead());
       });
@@ -466,10 +466,10 @@ describe('DoubleLinkedList', () => {
         const node1 = list.getNodeAt(1);
 
         if (node1) {
-          expect(node1.value).toBe(2);
-          expect(node1.previousNode?.value).toBe(1);
-          expect(node1.nextNode?.value).toBe(3);
-          expect(node1.list).toBe(list);
+          expect(getNodeValue(node1)).toBe(2);
+          expect(getNodeValue(getPreviousNode(node1))).toBe(1);
+          expect(getNodeValue(getNextNode(node1))).toBe(3);
+          expect(getNodeList(node1)).toBe(list);
         }
       });
     });
@@ -481,8 +481,8 @@ describe('DoubleLinkedList', () => {
         const list = new DoubleLinkedList<number>();
         const node = list.push(42);
         expect(list.getLength()).toBe(1);
-        expect(list.getTail()?.value).toBe(42);
-        expect(node.value).toBe(42);
+        expect(getNodeValue(list.getTail())).toBe(42);
+        expect(getNodeValue(node)).toBe(42);
       });
     });
 
@@ -534,7 +534,7 @@ describe('DoubleLinkedList', () => {
         const node = list.unshift(1);
         expect(list.getLength()).toBe(3);
         expect([...list]).toEqual([1, 2, 3]);
-        expect(node.value).toBe(1);
+        expect(getNodeValue(node)).toBe(1);
       });
     });
 
@@ -744,22 +744,22 @@ describe('DoubleLinkedList', () => {
 
       // Verify linked list integrity
       const head = list.getHead();
-      expect(head?.value).toBe('a');
-      expect(head?.nextNode?.value).toBe('x');
-      expect(head?.nextNode?.nextNode?.value).toBe('y');
-      expect(head?.nextNode?.nextNode?.nextNode?.value).toBe('d');
+      expect(getNodeValue(head)).toBe('a');
+      expect(getNodeValue(getNextNode(head))).toBe('x');
+      expect(getNodeValue(getNextNode(getNextNode(head)))).toBe('y');
+      expect(getNodeValue(getNextNode(getNextNode(getNextNode(head))))).toBe('d');
 
       const tail = list.getTail();
-      expect(tail?.value).toBe('d');
-      expect(tail?.previousNode?.value).toBe('y');
-      expect(tail?.previousNode?.previousNode?.value).toBe('x');
-      expect(tail?.previousNode?.previousNode?.previousNode?.value).toBe('a');
+      expect(getNodeValue(tail)).toBe('d');
+      expect(getNodeValue(getPreviousNode(tail))).toBe('y');
+      expect(getNodeValue(getPreviousNode(getPreviousNode(tail)))).toBe('x');
+      expect(getNodeValue(getPreviousNode(getPreviousNode(getPreviousNode(tail))))).toBe('a');
     });
 
     describe('node-based splice', () => {
       it('should splice at node position for removal', () => {
         const list = new DoubleLinkedList('a', 'b', 'c', 'd');
-        const nodeB = list.getHead()?.nextNode;
+        const nodeB = getNextNode(list.getHead());
 
         if (nodeB) {
           const removed = list.splice(nodeB, 2);
@@ -780,7 +780,7 @@ describe('DoubleLinkedList', () => {
 
       it('should splice at node position for replacement', () => {
         const list = new DoubleLinkedList(1, 2, 3, 4);
-        const secondNode = list.getHead()?.nextNode;
+        const secondNode = getNextNode(list.getHead());
 
         if (secondNode) {
           const removed = list.splice(secondNode, 2, 10, 20, 30);
@@ -826,7 +826,7 @@ describe('DoubleLinkedList', () => {
       it('should maintain performance benefit with node reference', () => {
         // This test ensures we don't traverse to find the node when it's provided
         const list = new DoubleLinkedList(...Array.from({ length: 1000 }, (_, i) => i));
-        const middleNode = list.getHead()?.nextNode?.nextNode; // 3rd node
+        const middleNode = getNextNode(getNextNode(list.getHead())); // 3rd node
 
         if (middleNode) {
           const startTime = performance.now();
@@ -983,7 +983,7 @@ describe('DoubleLinkedList', () => {
     describe('Node-Level Control examples', () => {
       it('should support traditional node manipulation', () => {
         const list = new DoubleLinkedList('a', 'b', 'd');
-        const nodeB = list.getHead()?.nextNode;
+        const nodeB = getNextNode(list.getHead());
         if (nodeB) {
           list.insertAfterNode(nodeB, 'c');
         }
@@ -992,7 +992,7 @@ describe('DoubleLinkedList', () => {
 
       it('should support enhanced node-based splice', () => {
         const list2 = new DoubleLinkedList(1, 2, 5, 6);
-        const nodeAt5 = list2.getTail()?.previousNode;
+        const nodeAt5 = getPreviousNode(list2.getTail());
         if (nodeAt5) {
           list2.splice(nodeAt5, 1, 3, 4);
         }
@@ -1017,8 +1017,8 @@ describe('DoubleLinkedList', () => {
 
         const head = list.getHead();
         const tail = list.getTail();
-        expect(head?.value).toBe('start');
-        expect(tail?.value).toBe('a');
+        expect(getNodeValue(head)).toBe('start');
+        expect(getNodeValue(tail)).toBe('a');
 
         if (head) {
           list.insertAfterNode(head, 'middle');
@@ -1042,7 +1042,7 @@ describe('DoubleLinkedList', () => {
         expect(list.get(-1)).toBe(5);
 
         const node = list.getNodeAt(2);
-        expect(node?.value).toBe(3);
+        expect(getNodeValue(node)).toBe(3);
 
         let callbackCount = 0;
         list.forEach(() => {
@@ -1090,7 +1090,7 @@ describe('DoubleLinkedList', () => {
 
       it('should support node-based splice for performance', () => {
         const list = new DoubleLinkedList(1, 2, 3, 4, 5);
-        const node = list.getHead()?.nextNode?.nextNode;
+        const node = getNextNode(getNextNode(list.getHead()));
         if (node) {
           list.splice(node, 1, 10, 20);
         }
@@ -1114,9 +1114,9 @@ describe('DoubleLinkedList', () => {
             if (node !== undefined) {
               // Move to front (most recently used) - O(1) operation!
               this.list.remove(node);
-              const newNode = this.list.prepend(node.value);
+              const newNode = this.list.prepend(getNodeValue(node));
               this.map.set(key, newNode);
-              return node.value.value;
+              return getNodeValue(node).value;
             }
             return undefined;
           }
@@ -1136,7 +1136,7 @@ describe('DoubleLinkedList', () => {
                 const tail = this.list.getTail();
                 if (tail !== undefined) {
                   this.list.remove(tail);
-                  this.map.delete(tail.value.key);
+                  this.map.delete(getNodeValue(tail).key);
                 }
               }
 
@@ -1197,31 +1197,31 @@ describe('DoubleLinkedList', () => {
           private current: DoubleLinkedListNode<T> | undefined;
 
           execute(state: T): void {
-            if (this.current !== undefined && this.current.nextNode !== undefined) {
-              this.history.splice(this.current.nextNode, this.history.getLength());
+            if (this.current !== undefined && getNextNode(this.current) !== undefined) {
+              this.history.splice(getNextNode(this.current), this.history.getLength());
             }
 
             this.current = this.current !== undefined ? this.history.insertAfterNode(this.current, state) : this.history.append(state);
           }
 
           undo(): T | undefined {
-            if (this.current !== undefined && this.current.previousNode !== undefined) {
-              this.current = this.current.previousNode;
-              return this.current.value;
+            if (this.current !== undefined && getPreviousNode(this.current) !== undefined) {
+              this.current = getPreviousNode(this.current);
+              return getNodeValue(this.current);
             }
             return undefined;
           }
 
           redo(): T | undefined {
-            if (this.current !== undefined && this.current.nextNode !== undefined) {
-              this.current = this.current.nextNode;
-              return this.current.value;
+            if (this.current !== undefined && getNextNode(this.current) !== undefined) {
+              this.current = getNextNode(this.current);
+              return getNodeValue(this.current);
             }
             return undefined;
           }
 
           getCurrent(): T | undefined {
-            return this.current !== undefined ? this.current.value : undefined;
+            return getNodeValue(this.current);
           }
         }
 
