@@ -1,7 +1,7 @@
 {
   "name": "doublell",
-  "version": "1.1.6",
-  "description": "A very minimal double linked list",
+  "version": "2.0.0",
+  "description": "A doubly linked list",
   "keywords": [
     "browser",
     "data-structure",
@@ -20,6 +20,7 @@
   "homepage": "https://typescript-oss.github.io/doublell/",
   "license": "MIT",
   "private": false,
+  "sideEffects": false,
   "scripts": {
     "benchmark": "yarn build && cd benchmarks && yarn benchmark",
     "build": "tsc -p tsconfig.cjs.json && node ./build.mjs",

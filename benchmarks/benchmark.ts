@@ -25,7 +25,7 @@ const MEDIUM_SIZE = 5000;
 const LARGE_SIZE = 50000;
 
 // Number of iterations for averaging results
-const ITERATIONS = 3;
+const ITERATIONS = 10;
 
 type BenchmarkMethod = <L, MiddleT>(benchmarks: Benchmarks<any, any>, list: L, middle: MiddleT, data: string[]) => any;
 type BenchmarkResults = Record<string, number | string>;
@@ -33,7 +33,7 @@ type BenchmarkResults = Record<string, number | string>;
 /**
  * Measures execution time of a function
  */
-function measureTime<T>(setup: () => T, fn: (prep: T) => void, iterations: number = 1): number {
+function measureTime<T>(setup: () => T, fn: (prep: T) => void, iterations: number = ITERATIONS): number {
   const times: number[] = [];
 
   for (let i = 0; i < iterations; i++) {
@@ -605,8 +605,7 @@ function runBenchmark(name: string, size: number, testData: string[], benchmarkM
       },
       ({ list, middle }) => {
         benchmarkMethod(doublellBenchmarks, list, middle, testData);
-      },
-      ITERATIONS
+      }
     );
     results.doublell = time;
   } catch (error) {
@@ -623,8 +622,7 @@ function runBenchmark(name: string, size: number, testData: string[], benchmarkM
       },
       ({ list, middle }) => {
         benchmarkMethod(arrayBenchmarks, list, middle, testData);
-      },
-      ITERATIONS
+      }
     );
     results.array = time;
   } catch (error) {
@@ -647,8 +645,7 @@ function runBenchmark(name: string, size: number, testData: string[], benchmarkM
       },
       ({ list, middle }) => {
         benchmarkMethod(linkedListWooormBenchmarks, list, middle, testData);
-      },
-      ITERATIONS
+      }
     );
     results['linked-list'] = time;
   } catch (error) {
@@ -665,8 +662,7 @@ function runBenchmark(name: string, size: number, testData: string[], benchmarkM
       },
       ({ list, middle }) => {
         benchmarkMethod(dblyLinkedListBenchmarks, list, middle, testData);
-      },
-      ITERATIONS
+      }
     );
     results['dbly-linked-list'] = time;
   } catch (error) {
@@ -689,8 +685,7 @@ function runBenchmark(name: string, size: number, testData: string[], benchmarkM
       },
       ({ list, middle }) => {
         benchmarkMethod(simpleDoubleLinkedListBenchmarks, list, middle, testData);
-      },
-      ITERATIONS
+      }
     );
     results['simple-double-linked-list'] = time;
   } catch (error) {
@@ -755,19 +750,39 @@ async function runBenchmarks(): Promise<void> {
     const testData = createTestData(size);
     const sizeResults: Record<string, BenchmarkResults> = {};
 
+    // Insertion at beginning
+    sizeResults.insertBeginning = runBenchmark(`Insert at Beginning`, size, testData, (benchmarks, _list, _middle, data) => {
+      benchmarks.insertAtBeginning(data);
+    });
+
+    // Insert in middle (100 items)
+    sizeResults.insertMiddle = runBenchmark('Insert 100 items in Middle', size, testData, (benchmarks, list, middle, data) => {
+      benchmarks.insertInMiddle(list, middle, data);
+    });
+
     // Insertion at end
     sizeResults.insertEnd = runBenchmark(`Insert at End`, size, testData, (benchmarks, _list, _middle, data) => {
       benchmarks.insertAtEnd(data);
     });
 
-    // Insertion at beginning - limit data size for performance
-    sizeResults.insertBeginning = runBenchmark(`Insert at Beginning`, size, testData, (benchmarks, _list, _middle, data) => {
-      benchmarks.insertAtBeginning(data);
+    // Remove from beginning
+    sizeResults.removeBeginning = runBenchmark('Remove 100 items from Beginning', size, testData, (benchmarks, list, _middle, _data) => {
+      benchmarks.removeFromBeginning(list);
     });
 
-    // Traversal
-    sizeResults.traverse = runBenchmark('Full Traversal', size, testData, (benchmarks, list, _middle, _data) => {
-      benchmarks.traverse(list);
+    // Remove from middle (100 items)
+    sizeResults.removeMiddle = runBenchmark('Remove 100 items from Middle', size, testData, (benchmarks, list, middle, _data) => {
+      benchmarks.removeFromMiddle(list, middle);
+    });
+
+    // Remove from end
+    sizeResults.removeEnd = runBenchmark('Remove 100 items from End', size, testData, (benchmarks, list, _middle, _data) => {
+      benchmarks.removeFromEnd(list);
+    });
+
+    // Index access (first 100 items)
+    sizeResults.indexAccess = runBenchmark('Index Access first 100 items', size, testData, (benchmarks, list, _middle, _data) => {
+      benchmarks.indexAccess(list);
     });
 
     // Find item (search for middle item)
@@ -776,19 +791,9 @@ async function runBenchmarks(): Promise<void> {
       benchmarks.findItem(list, searchItem);
     });
 
-    // Remove from end
-    sizeResults.removeEnd = runBenchmark('Remove from End (100 items)', size, testData, (benchmarks, list, _middle, _data) => {
-      benchmarks.removeFromEnd(list);
-    });
-
-    // Remove from beginning
-    sizeResults.removeBeginning = runBenchmark('Remove from Beginning (100 items)', size, testData, (benchmarks, list, _middle, _data) => {
-      benchmarks.removeFromBeginning(list);
-    });
-
-    // Convert to array
-    sizeResults.toArray = runBenchmark('Convert to Array', size, testData, (benchmarks, list, _middle, _data) => {
-      benchmarks.convertToArray(list);
+    // Traversal
+    sizeResults.traverse = runBenchmark('Full Traversal', size, testData, (benchmarks, list, _middle, _data) => {
+      benchmarks.traverse(list);
     });
 
     // Map operation
@@ -796,43 +801,33 @@ async function runBenchmarks(): Promise<void> {
       benchmarks.map(list);
     });
 
-    // Index access (first 100 items)
-    sizeResults.indexAccess = runBenchmark('Index Access (first 100 items)', size, testData, (benchmarks, list, _middle, _data) => {
-      benchmarks.indexAccess(list);
-    });
-
-    // Insert in middle (100 items)
-    sizeResults.insertMiddle = runBenchmark('Insert in Middle (100 items)', size, testData, (benchmarks, list, middle, data) => {
-      benchmarks.insertInMiddle(list, middle, data);
-    });
-
-    // Remove from middle (100 items)
-    sizeResults.removeMiddle = runBenchmark('Remove from Middle (100 items)', size, testData, (benchmarks, list, middle, _data) => {
-      benchmarks.removeFromMiddle(list, middle);
+    // Convert to array
+    sizeResults.toArray = runBenchmark('Convert to Array', size, testData, (benchmarks, list, _middle, _data) => {
+      benchmarks.convertToArray(list);
     });
 
     allResults[name] = sizeResults;
   }
 
   // Generate summary table
-  console.log('\n\n📋 Summary Table for README');
+  console.log('\n\n📋 Summary Table');
   console.log('===========================\n');
 
   console.log('| Operation | doublell | Array | linked-list | dbly-linked-list | simple-double-linked-list |');
   console.log('|-----------|----------|-------|-------------|------------------|---------------------------|');
 
   const operations = [
-    { key: 'insertEnd', name: 'Insert at End' },
-    { key: 'insertBeginning', name: 'Insert at Beginning' },
-    { key: 'insertMiddle', name: 'Insert in Middle' },
-    { key: 'removeEnd', name: 'Remove from End' },
-    { key: 'removeBeginning', name: 'Remove from Beginning' },
-    { key: 'removeMiddle', name: 'Remove from Middle' },
-    { key: 'traverse', name: 'Full Traversal' },
-    { key: 'find', name: 'Find Item' },
-    { key: 'indexAccess', name: 'Index Access' },
-    { key: 'map', name: 'Map Operation' },
-    { key: 'toArray', name: 'Convert to Array' }
+    { key: 'insertBeginning', name: `Insert ${MEDIUM_SIZE} Items at Beginning` },
+    { key: 'insertMiddle', name: `Insert ${MEDIUM_SIZE} Items in Middle` },
+    { key: 'insertEnd', name: `Insert ${MEDIUM_SIZE} Items at End` },
+    { key: 'removeBeginning', name: `Remove 100 Items from Beginning of ${MEDIUM_SIZE} Item List` },
+    { key: 'removeMiddle', name: `Remove 100 Items from Middle of ${MEDIUM_SIZE} Item List` },
+    { key: 'removeEnd', name: `Remove 100 Items from End of ${MEDIUM_SIZE} Item List` },
+    { key: 'indexAccess', name: `Index Access First 100 Items of ${MEDIUM_SIZE} Item List` },
+    { key: 'find', name: `Find Item in ${MEDIUM_SIZE} Item List` },
+    { key: 'traverse', name: `Full Traversal of ${MEDIUM_SIZE} Item List` },
+    { key: 'map', name: `Full Map Operation on ${MEDIUM_SIZE} Item List` },
+    { key: 'toArray', name: `Convert ${MEDIUM_SIZE} Item List to Array` }
   ] as const;
 
   // Use Medium size results for the summary
@@ -842,31 +837,34 @@ async function runBenchmarks(): Promise<void> {
     const results = mediumResults[key];
 
     const implementations = ['doublell', 'array', 'linked-list', 'dbly-linked-list', 'simple-double-linked-list'] as const;
+
+    // Get valid times and sort to determine rankings
+    const validResults = implementations
+      .map((impl) => ({ impl, time: results[impl] }))
+      .filter(({ time }) => typeof time === 'number')
+      .sort((a, b) => (a.time as number) - (b.time as number));
+
+    // Create ranking map
+    const rankings = new Map<string, number>();
+    validResults.forEach(({ impl }, index) => {
+      rankings.set(impl, index);
+    });
+
     const times = implementations.map((impl) => {
       const time = results[impl];
       if (typeof time === 'number') {
-        return formatTime(time);
+        const ranking = rankings.get(impl);
+        let medal = '';
+        if (ranking === 0) medal = '🥇 ';
+        else if (ranking === 1) medal = '🥈 ';
+        else if (ranking === 2) medal = '🥉 ';
+        return medal + formatTime(time);
       }
       return 'N/A';
     });
 
     console.log(`| ${name} | ${times.join(' | ')} |`);
   });
-
-  console.log('\n💡 Performance Notes:');
-  console.log('• All times are averaged over 3 runs on 10,000 items');
-  console.log('• Smaller times are better');
-  console.log('• "Insert at Beginning" tests 1,000 items to avoid timeout');
-  console.log('• "Remove" operations remove 100 items for consistency');
-  console.log('• "Index Access" tests accessing first 100 items');
-  console.log('• "Insert/Remove in Middle" operations test 100 items at middle positions');
-
-  console.log('\n✨ doublell advantages:');
-  console.log('• O(1) insertion/deletion at both ends');
-  console.log('• O(1) removal when you have node reference');
-  console.log('• Bidirectional traversal optimization for index access');
-  console.log('• Rich TypeScript support with familiar Array-like API');
-  console.log('• Iterator protocol support for modern JavaScript features');
 }
 
 // Run the benchmarks

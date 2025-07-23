@@ -1,7 +1,34 @@
+# ls -al and then comment out files that we DO want
+.claude
+.DS_Store
+.git
+.github
+.gitignore
+.npmignore
 .prettierrc.mjs
-eslint.config.mjs
-typedoc.json
+benchmarks
 build.mjs
+CHANGELOG.md
+CLAUDE.md
+CONTRIBUTING.md
+docs
+eslint.config.mjs
+jest.config.mjs
+#lib
+#LICENSE
+node_modules
+#package.json
+#README.md
+SECURITY.md
+src
+tsconfig.base.json
+tsconfig.cjs.json
+tsconfig.json
+tsconfig.mjs.json
+typedoc.json
+yarn.lock
+
+# DEFAULTS --
 
 # Account key
 *serviceAccountKey*

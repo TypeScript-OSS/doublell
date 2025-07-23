@@ -41,6 +41,7 @@ const first = list.shift(); // Remove from start
 ## ✨ Why Choose doublell?
 
 ### 🎯 **Type-Safe by Design**
+
 ```typescript
 // Full TypeScript generics support
 const numbers = new DoubleLinkedList<number>(1, 2, 3);
@@ -51,12 +52,13 @@ const found = list.find((x) => x > 5); // number | undefined
 ```
 
 ### ⚡ **Performance Optimized**
+
 - **O(1)** insertion/deletion at any position (when you have the node reference)
 - **O(1)** push/pop/shift/unshift operations
-- **Cached array conversion** - only rebuilds when needed
 - **Zero dependencies** - minimal bundle impact for web and Node.js
 
 ### 🧑‍💻 **Universal Developer Experience**
+
 ```typescript
 // Array-like index access with optimization
 console.log(list.get(0));    // First item
@@ -85,17 +87,20 @@ console.log(queue.shift()); // 1 (FIFO)
 ```
 
 ### 🔧 **Node-Level Control**
+
 ```typescript
+import { DoubleLinkedList, getNextNode, getPreviousNode, getNodeValue } from 'doublell';
+
 // Traditional node manipulation
 const list = new DoubleLinkedList('a', 'b', 'd');
-const nodeB = list.getHead()?.nextNode;
+const nodeB = getNextNode(list.getHead());
 if (nodeB) {
   list.insertAfterNode(nodeB, 'c'); // O(1) insertion
 }
 
 // Enhanced node-based splice - even more powerful!
 const list2 = new DoubleLinkedList(1, 2, 5, 6);
-const nodeAt5 = list2.getTail()?.previousNode;
+const nodeAt5 = getPreviousNode(list2.getTail());
 if (nodeAt5) {
   // Replace one item with multiple - all in O(1)!
   list2.splice(nodeAt5, 1, 3, 4); // [1, 2, 3, 4, 6]
@@ -108,6 +113,7 @@ list2.splice(undefined, 0, 7, 8, 9); // [1, 2, 3, 4, 6, 7, 8, 9]
 ## 📚 Complete API Reference
 
 ### Core Operations
+
 ```typescript
 // Creation and basic operations
 const list = new DoubleLinkedList<T>(...items);
@@ -126,6 +132,7 @@ list.insertBeforeNode(node, item)  // Insert before node
 ```
 
 ### Array-like Methods
+
 ```typescript
 // Index-based access
 list.get(index)             // Get item by index (supports negative indices)
@@ -157,6 +164,7 @@ for (const item of list)    // for...of iteration
 ## 🎨 Real-World Use Cases
 
 ### LRU Cache Implementation
+
 ```typescript
 // Why DoubleLinkedList is perfect for LRU Cache:
 // - O(1) access to both ends (most/least recently used)
@@ -177,9 +185,10 @@ class LRUCache<K, V> {
     if (node !== undefined) {
       // Move to front (most recently used) - O(1)!
       this.list.remove(node);
-      const newNode = this.list.prepend(node.value);
+      const nodeValue = getNodeValue(node);
+      const newNode = this.list.prepend(nodeValue);
       this.map.set(key, newNode);
-      return node.value.value;
+      return nodeValue.value;
     }
     return undefined;
   }
@@ -198,7 +207,8 @@ class LRUCache<K, V> {
         const tail = this.list.getTail(); // Least recently used
         if (tail !== undefined) {
           this.list.remove(tail);        // O(1) eviction!
-          this.map.delete(tail.value.key);
+          const tailValue = getNodeValue(tail);
+          this.map.delete(tailValue.key);
         }
       }
       
@@ -217,16 +227,20 @@ cache.set('d', 4); // Evicts 'b' (LRU) in O(1)
 ```
 
 ### Undo/Redo System
+
 ```typescript
+import { DoubleLinkedList, DoubleLinkedListNode, getNextNode, getPreviousNode, getNodeValue } from 'doublell';
+
 class UndoRedoManager<T> {
   private history = new DoubleLinkedList<T>();
   private current: DoubleLinkedListNode<T> | undefined;
   
   execute(state: T): void {
     // When executing new action, discard any "future" states using node-based splice
-    if (this.current !== undefined && this.current.nextNode !== undefined) {
+    const nextNode = this.current ? getNextNode(this.current) : undefined;
+    if (this.current !== undefined && nextNode !== undefined) {
       // Remove all states after current position - O(1) with node reference!
-      this.history.splice(this.current.nextNode, this.history.getLength());
+      this.history.splice(nextNode, this.history.getLength());
     }
     
     // Add new state
@@ -236,17 +250,19 @@ class UndoRedoManager<T> {
   }
   
   undo(): T | undefined {
-    if (this.current !== undefined && this.current.previousNode !== undefined) {
-      this.current = this.current.previousNode;
-      return this.current.value;
+    const prevNode = this.current ? getPreviousNode(this.current) : undefined;
+    if (this.current !== undefined && prevNode !== undefined) {
+      this.current = prevNode;
+      return getNodeValue(this.current);
     }
     return undefined;
   }
   
   redo(): T | undefined {
-    if (this.current !== undefined && this.current.nextNode !== undefined) {
-      this.current = this.current.nextNode;
-      return this.current.value;
+    const nextNode = this.current ? getNextNode(this.current) : undefined;
+    if (this.current !== undefined && nextNode !== undefined) {
+      this.current = nextNode;
+      return getNodeValue(this.current);
     }
     return undefined;
   }
@@ -305,11 +321,13 @@ yarn lint
 ```
 
 ### Browser Support
+
 - **Modern browsers** with ES2015+ support
 - **Bundle size**: Minified and tree-shakeable
 - **Module formats**: ESM and UMD available
 
 ### Node.js Support
+
 - **Node.js 14.14+** (all maintained versions)
 - **CommonJS and ESM** module support
 - **TypeScript definitions** included
